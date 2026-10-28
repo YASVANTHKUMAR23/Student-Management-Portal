@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="mb-4">Student Dashboard</h2>
+
+<div class="row mb-4">
+
+<div class="col-md-4">
+
+<div class="card text-bg-primary">
+
+<div class="card-body">
+
+<h5>Total Students</h5>
+
+<h2>{{ count }}</h2>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+{% if user.is_superuser or user.profile.role == "admin" %}
+<div class="mb-3">
+    <a href="{% url 'assign_teacher_courses' %}" class="btn btn-outline-primary btn-sm">
+        🧑‍🏫 Assign Teachers to Courses
+    </a>
+</div>
+{% endif %}
+
+<form method="GET" class="row g-2 mb-3">
+
+<div class="col-md-6">
+    <input
+    type="text"
+    name="search"
+    value="{{ search }}"
+    class="form-control"
+    placeholder="Search by name, email or city">
+</div>
+
+<div class="col-md-4">
+    <select name="course" class="form-select">
+        <option value="">All Courses</option>
+        {% for course in courses %}
+        <option value="{{ course.id }}" {% if course.id|stringformat:"s" == course_filter %}selected{% endif %}>
+            {{ course.name }}
+        </option>
+        {% endfor %}
+    </select>
+</div>
+
+<div class="col-md-2 d-grid">
+    <button class="btn btn-dark">
+        Search
+    </button>
+</div>
+
+</form>
+
+{% if search or course_filter %}
+<div class="mb-3">
+    <a href="{% url 'students' %}" class="btn btn-sm btn-outline-secondary">
+        Clear filters
+    </a>
+</div>
+{% endif %}
+
+<div class="table-responsive">
+
+<table class="table table-striped table-hover align-middle">
+
+<thead class="table-dark">
+
+<tr>
+
+<th>Name</th>
+<th>Course</th>
+<th>Teacher</th>
+<th>City</th>
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for student in students %}
+
+<tr>
+
+<td>
+
+<a href="{% url 'student_detail' student.id %}">
+
+{{ student.name }}
+
+</a>
+
+</td>
+
+<td>{{ student.course.name }}</td>
+
+<td>{% if student.teacher %}{{ student.teacher.username }}{% else %}<span class="text-muted">Unassigned</span>{% endif %}</td>
+
+<td>{{ student.city }}</td>
+
+<td>
+
+<a
+class="btn btn-warning btn-sm"
+href="{% url 'edit_student' student.id %}">
+
+Edit
+
+</a>
+
+<a
+class="btn btn-danger btn-sm"
+href="{% url 'delete_student' student.id %}">
+
+Delete
+
+</a>
+
+</td>
+
+</tr>
+
+{% empty %}
+
+<tr>
+    <td colspan="5" class="text-center text-muted">No students found.</td>
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+{% if page_obj.paginator.num_pages > 1 %}
+<nav>
+
+<ul class="pagination">
+
+{% if page_obj.has_previous %}
+
+<li class="page-item">
+
+<a
+class="page-link"
+href="?page={{ page_obj.previous_page_number }}{% if querystring %}&{{ querystring }}{% endif %}">
+
+Previous
+
+</a>
+
+</li>
+
+{% endif %}
+
+{% for page_number in page_obj.paginator.page_range %}
+<li class="page-item {% if page_number == page_obj.number %}active{% endif %}">
+    <a class="page-link" href="?page={{ page_number }}{% if querystring %}&{{ querystring }}{% endif %}">
+        {{ page_number }}
+    </a>
+</li>
+{% endfor %}
+
+{% if page_obj.has_next %}
+
+<li class="page-item">
+
+<a
+class="page-link"
+href="?page={{ page_obj.next_page_number }}{% if querystring %}&{{ querystring }}{% endif %}">
+
+Next
+
+</a>
+
+</li>
+
+{% endif %}
+
+</ul>
+
+</nav>
+{% endif %}
+
+{% endblock %}

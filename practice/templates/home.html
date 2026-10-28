@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+{% if is_student_view %}
+
+    <h2 class="mb-4">📊 My Dashboard</h2>
+
+    <div class="card shadow">
+
+        <div class="card-header bg-dark text-white">
+            <h4 class="mb-0">Welcome, {{ user.username }}</h4>
+        </div>
+
+        <div class="card-body">
+
+            {% if own_record %}
+
+                <p>Here's the student record linked to your account:</p>
+
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><strong>Name:</strong> {{ own_record.name }}</li>
+                    <li class="list-group-item"><strong>Course:</strong> {{ own_record.course }}</li>
+                    <li class="list-group-item"><strong>City:</strong> {{ own_record.city }}</li>
+                </ul>
+
+                <a href="{% url 'student_detail' own_record.id %}" class="btn btn-primary mt-3">
+                    View Full Record
+                </a>
+
+            {% else %}
+
+                <p class="text-muted">
+                    No student record is linked to your account yet.
+                    Ask a teacher or admin to link one from the Django admin panel.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+{% else %}
+
+    <h2 class="mb-4">📊 Dashboard</h2>
+
+    <div class="row">
+
+        <div class="col-md-4 mb-3">
+            <div class="card bg-primary text-white shadow">
+                <div class="card-body text-center">
+                    <h1>{{ total_students }}</h1>
+                    <h5>Total Students</h5>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card bg-success text-white shadow">
+                <div class="card-body text-center">
+                    <h1>{{ total_courses }}</h1>
+                    <h5>Total Courses</h5>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card bg-warning text-dark shadow">
+                <div class="card-body text-center">
+                    <h1>{{ total_cities }}</h1>
+                    <h5>Total Cities</h5>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="card shadow mt-4">
+
+        <div class="card-header bg-dark text-white">
+            <h4 class="mb-0">Latest Students</h4>
+        </div>
+
+        <div class="card-body">
+
+            <table class="table table-striped">
+
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Course</th>
+                        <th>City</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for student in latest_students %}
+
+                    <tr>
+                        <td>{{ student.name }}</td>
+                        <td>{{ student.course }}</td>
+                        <td>{{ student.city }}</td>
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+                        <td colspan="3">No students found.</td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <div class="mt-4">
+        <a href="{% url 'add_student' %}" class="btn btn-success">
+            Add Student
+        </a>
+
+        <a href="{% url 'students' %}" class="btn btn-primary">
+            View Students
+        </a>
+    </div>
+
+    <div class="card shadow mt-5">
+
+        <div class="card-header bg-info text-white">
+            <h4 class="mb-0">Students Per Course</h4>
+        </div>
+
+        <div class="card-body">
+            <canvas id="courseChart"></canvas>
+        </div>
+
+    </div>
+
+{% endif %}
+
+</div>
+
+{% if not is_student_view %}
+
+{{ labels|json_script:"chart-labels" }}
+{{ data|json_script:"chart-data" }}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+const labels = JSON.parse(
+    document.getElementById("chart-labels").textContent
+);
+
+const data = JSON.parse(
+    document.getElementById("chart-data").textContent
+);
+
+const ctx = document.getElementById("courseChart");
+
+new Chart(ctx, {
+
+    type: "bar",
+
+    data: {
+
+        labels: labels,
+
+        datasets: [{
+
+            label: "Students",
+
+            data: data,
+
+            backgroundColor: [
+                "#0d6efd",
+                "#198754",
+                "#ffc107",
+                "#dc3545",
+                "#6f42c1",
+                "#20c997"
+            ],
+
+            borderWidth: 1
+
+        }]
+
+    },
+
+    options: {
+
+        responsive: true,
+
+        scales: {
+
+            y: {
+
+                beginAtZero: true,
+
+                ticks: {
+                    precision: 0
+                }
+
+            }
+
+        }
+
+    }
+
+});
+
+</script>
+
+{% endif %}
+
+{% endblock %}

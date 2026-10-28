@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="mb-4">🧑‍🏫 Assign Teachers to Courses</h2>
+
+<div class="row">
+
+<div class="col-md-7">
+
+<div class="card shadow mb-4">
+
+<div class="card-body">
+
+<p class="text-muted">
+    Pick a teacher, then select every course they should be assigned to
+    teach. Selecting a different teacher below reloads their current
+    assignments.
+</p>
+
+<form method="GET" class="mb-3">
+    <div class="row g-2">
+        <div class="col-md-9">
+            {{ form.teacher }}
+        </div>
+        <div class="col-md-3 d-grid">
+            <button class="btn btn-outline-dark" type="submit">Load</button>
+        </div>
+    </div>
+</form>
+
+{% if selected_teacher or form.initial.teacher %}
+
+<form method="POST">
+
+    {% csrf_token %}
+
+    <input type="hidden" name="teacher" value="{{ form.initial.teacher|default:selected_teacher.id }}">
+
+    <div class="mb-3">
+        <label class="form-label">{{ form.courses.label }}</label>
+        {{ form.courses }}
+        <div class="form-text">{{ form.courses.help_text }}</div>
+    </div>
+
+    <button class="btn btn-success">
+        Save Assignment
+    </button>
+
+</form>
+
+{% else %}
+
+<p class="text-muted mb-0">
+    Select a teacher above and click "Load" to manage their course assignments.
+</p>
+
+{% endif %}
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-5">
+
+<div class="card shadow">
+
+<div class="card-header bg-dark text-white">
+    Current Teacher &rarr; Course Assignments
+</div>
+
+<div class="card-body">
+
+<table class="table table-sm">
+    <thead>
+        <tr>
+            <th>Teacher</th>
+            <th>Courses</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for teacher in teachers %}
+        <tr>
+            <td>
+                <a href="?teacher={{ teacher.id }}">{{ teacher.username }}</a>
+            </td>
+            <td>
+                {% for course in teacher.profile.courses.all %}
+                    <span class="badge bg-secondary">{{ course.name }}</span>
+                {% empty %}
+                    <span class="text-muted">None assigned</span>
+                {% endfor %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="2" class="text-muted">No teacher accounts yet.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+
+<div class="col-md-6">
+
+<div class="card shadow-lg">
+
+<div class="card-body text-center">
+
+<img
+
+src="{% if user.profile.profile_picture %}{{ user.profile.profile_picture.url }}{% else %}{% static 'img/default.png' %}{% endif %}"
+
+class="rounded-circle shadow"
+
+width="180"
+
+height="180"
+
+style="object-fit:cover;">
+
+<hr>
+
+<h3>
+
+{{ user.username }}
+
+<span class="badge bg-info text-dark">
+    {% if user.is_superuser %}Admin{% else %}{{ user.profile.get_role_display }}{% endif %}
+</span>
+
+</h3>
+
+<p class="text-muted">
+
+{{ user.email }}
+
+</p>
+
+<p>
+
+{{ user.profile.bio }}
+
+</p>
+
+<p>
+
+<b>Member Since:</b>
+
+{{ user.profile.joined_date|date:"d M Y" }}
+
+</p>
+
+<div class="alert alert-secondary text-start" role="alert">
+
+    <strong>Session info</strong>
+    <hr class="my-2">
+    <div>Signed in as: <strong>{% if user.is_superuser %}Admin{% else %}{{ user.profile.get_role_display }}{% endif %}</strong></div>
+    <div>This session expires at: <strong>{{ session_expiry_date }}</strong></div>
+    <div>Session lifetime: <strong>{{ session_age_seconds }}</strong> seconds</div>
+
+</div>
+
+{% if user.profile.role == "teacher" %}
+
+<div class="alert alert-light border text-start" role="alert">
+
+    <strong>My Assigned Courses</strong>
+    <hr class="my-2">
+    {% for course in user.profile.courses.all %}
+        <span class="badge bg-primary">{{ course.name }}</span>
+    {% empty %}
+        <span class="text-muted">No courses assigned yet — ask an Admin to assign you one.</span>
+    {% endfor %}
+
+</div>
+
+{% endif %}
+
+<a
+
+href="{% url 'edit_profile' %}"
+
+class="btn btn-primary">
+
+Edit Profile
+
+</a>
+
+<a
+
+href="{% url 'password_change' %}"
+
+class="btn btn-outline-secondary">
+
+Change Password
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+{% endblock %}

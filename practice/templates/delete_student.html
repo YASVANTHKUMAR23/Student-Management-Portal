@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="card">
+
+<div class="card-body">
+
+<h2>
+
+Delete Student
+
+</h2>
+
+<hr>
+
+<p>
+
+Are you sure you want to delete
+
+<strong>
+
+{{student.name}}
+
+</strong>?
+
+</p>
+
+<form method="POST">
+
+{% csrf_token %}
+
+<button
+class="btn btn-danger">
+
+Yes, Delete
+
+</button>
+
+<a
+href="{% url 'students' %}"
+class="btn btn-secondary">
+
+Cancel
+
+</a>
+
+</form>
+
+</div>
+
+</div>
+
+{% endblock %}

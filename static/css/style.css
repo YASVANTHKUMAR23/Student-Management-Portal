@@ -1,0 +1,68 @@
+/* Student Management System — custom styling
+   Complements Bootstrap 5 (loaded via CDN in base.html). */
+
+body {
+    min-height: 100vh;
+}
+
+.navbar-brand {
+    letter-spacing: 0.02em;
+}
+
+.card {
+    border: none;
+    border-radius: 0.75rem;
+}
+
+.card-header {
+    border-radius: 0.75rem 0.75rem 0 0 !important;
+}
+
+.table thead.table-dark th {
+    border-color: #454d55;
+}
+
+/* Give un-styled form fields (e.g. from Django's built-in
+   PasswordChangeForm / PasswordResetForm, rendered with {{ form.as_p }})
+   the same Bootstrap look as the rest of the app, without needing every
+   single form in the project to be wrapped in a custom mixin. */
+form p input[type="text"],
+form p input[type="password"],
+form p input[type="email"],
+form p input[type="number"],
+form p textarea,
+form p select {
+    display: block;
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    margin-top: 0.25rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #212529;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 0.375rem;
+}
+
+form p label {
+    font-weight: 500;
+    margin-bottom: 0.15rem;
+}
+
+form ul.errorlist {
+    color: #dc3545;
+    list-style: none;
+    padding-left: 0;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+}
+
+.pagination .page-link {
+    color: #212529;
+}
+
+.pagination .active .page-link {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    color: #fff;
+}
